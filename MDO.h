@@ -5,8 +5,38 @@
 typedef int TCheie;
 typedef int TValoare;
 
+
+// Lista inlantuita de val
+
+class NodVal;
+
+//se defineste tipul PNod ca fiind adresa unui Nod
+typedef NodVal* PNodVal;
+
+class NodVal
+{
+public:
+	friend class IteratorMDO;
+	friend class MDO;
+	//constructor
+	NodVal();
+	NodVal(TValoare e, PNodVal urm, PNodVal pre);
+	TValoare element();
+	PNodVal urmator();
+	PNodVal precedent();
+
+private:
+
+	TValoare e;
+	PNodVal urm;
+	PNodVal pre;
+};
+
+
+
 #include <utility>
 typedef std::pair<TCheie, TValoare> TElem;
+typedef std::pair<TCheie, PNodVal> TElem_new;
 
 using namespace std;
 
@@ -14,10 +44,37 @@ class IteratorMDO;
 
 typedef bool(*Relatie)(TCheie, TCheie);
 
+/// Lista de perechi
+
+class Nod;
+
+//se defineste tipul PNod ca fiind adresa unui Nod
+typedef Nod* PNod;
+
+class Nod
+{
+public:
+	friend class IteratorMDO;
+	friend class MDO;
+	//constructor
+	Nod(TElem_new e, PNod urm, PNod pre);
+	TElem_new element();
+	PNod urmator();
+	PNod precedent();
+
+private:
+
+	TElem_new e;
+	PNod urm;
+	PNod pre;
+};
+
 class MDO {
 	friend class IteratorMDO;
     private:
-	/* aici e reprezentarea */
+		PNod Inceput;
+		Relatie rel;
+		int len;
     public:
 
 	// constructorul implicit al MultiDictionarului Ordonat

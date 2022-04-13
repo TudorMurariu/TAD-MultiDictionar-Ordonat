@@ -14,7 +14,8 @@ private:
 	//contine o referinta catre containerul pe care il itereaza
 	const MDO& dict;
 	/* aici e reprezentarea  specifica a iteratorului */
-
+	PNod p;
+	PNodVal pval;
 
 public:
 
@@ -30,6 +31,6 @@ public:
 
 		//returneaza valoarea elementului din container referit de iterator
 		//arunca exceptie daca iteratorul nu e valid
-		TElem element() const;
+		pair <TCheie, TValoare> element() const;
 };
 
