@@ -1,80 +1,56 @@
 #pragma once
 
 #include <vector>
+#include <stdlib.h>
 
 typedef int TCheie;
 typedef int TValoare;
 
-
-// Lista inlantuita de val
-
-class NodVal;
-
-//se defineste tipul PNod ca fiind adresa unui Nod
-typedef NodVal* PNodVal;
-
-class NodVal
-{
-public:
-	friend class IteratorMDO;
-	friend class MDO;
-	//constructor
-	NodVal();
-	NodVal(TValoare e, PNodVal urm, PNodVal pre);
-	TValoare element();
-	PNodVal urmator();
-	PNodVal precedent();
-
-private:
-
-	TValoare e;
-	PNodVal urm;
-	PNodVal pre;
-};
-
-
-
 #include <utility>
 typedef std::pair<TCheie, TValoare> TElem;
-typedef std::pair<TCheie, PNodVal> TElem_new;
 
 using namespace std;
 
 class IteratorMDO;
+class MDO;
+
+class lista_mica {
+public:
+	int cp;				// capacitate memorare vectori
+	int* urm;			// lista cu pozitiile elementelor urmatoare
+	int* pre;
+	int prim;			// primul element din colectie
+	int primLiber;		// pozitia primului element liber
+	TElem* elems;
+	TCheie cheie;
+
+	lista_mica();
+	lista_mica(TCheie c);
+	int aloca();
+	void dealoca(int i);
+	int creeazaNod(TElem el);
+	void redim();
+};
 
 typedef bool(*Relatie)(TCheie, TCheie);
 
-/// Lista de perechi
-
-class Nod;
-
-//se defineste tipul PNod ca fiind adresa unui Nod
-typedef Nod* PNod;
-
-class Nod
-{
-public:
-	friend class IteratorMDO;
-	friend class MDO;
-	//constructor
-	Nod(TElem_new e, PNod urm, PNod pre);
-	TElem_new element();
-	PNod urmator();
-	PNod precedent();
-
-private:
-
-	TElem_new e;
-	PNod urm;
-	PNod pre;
-};
-
 class MDO {
 	friend class IteratorMDO;
-    private:
-		PNod Inceput;
+ private:
+public:
 		Relatie rel;
-		int len;
+		int cp;				// capacitate memorare vectori
+		int* urm;			// lista cu pozitiile elementelor urmatoare
+		int* pre;
+	    int prim;			// primul element din colectie
+		int primLiber;		// pozitia primului element liber
+		int len;			// numarul elementelor din colectie
+		lista_mica* elems;
+
+		int aloca();
+		void dealoca(int i);
+		int creeazaNod(TElem el);
+		void redim();
     public:
 
 	// constructorul implicit al MultiDictionarului Ordonat
@@ -102,5 +78,8 @@ class MDO {
 
 	// destructorul 	
 	~MDO();
+
+	// func noua
+	//vector<TValoare> stergeValoriPentruCheie(TCheie cheie);
 
 };

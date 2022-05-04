@@ -1,48 +1,49 @@
 #include "IteratorMDO.h"
-#include "MDO.h"
-#include <exception>
 
 /// Teta(1)
 IteratorMDO::IteratorMDO(const MDO& d) : dict(d){
 	/// Constructor
-	this->p = this->dict.Inceput;
-	if (this->p != NULL)
-		this->pval = this->p->e.second;
-	else
-		this->pval = NULL;
+	prim();
 }
 
 /// Teta(1)
 void IteratorMDO::prim(){
 	/// Resetam iteratorul
-	this->p = this->dict.Inceput;
+	i = this->dict.prim;
+	if(i > -1)
+		j = this->dict.elems[i].prim;
 }
 
 /// Teta(1)
 void IteratorMDO::urmator(){
 	/// trecem la urmatorul element din lista
-	if(! this->valid())
-		throw exception();
 
-	if (this->pval->urm == NULL)
+	if (!this->valid())
 	{
-		this->p = this->p->urm;
-		if(this->p != NULL)
-			this->pval = this->p->e.second;
+		throw exception();
 		return;
 	}
-	this->pval = this->pval->urm;
+
+	j = this->dict.elems[i].urm[j];
+
+	if (j == -1 || j == this->dict.elems[i].primLiber) // daca ajungem la finalul listei mici
+	{
+		i = this->dict.urm[i];
+		if(i != -1)
+			j = this->dict.elems[i].prim;
+	}
+	
 }
 
 /// Teta(1)
 bool IteratorMDO::valid() const{
 	/// Verificam daca iteratorul este valid(element al listei)
 	/// Ajunge sa verificam doar daca iteratorul nu este null
-
-	if (this->p == nullptr)
+	if(i == -1 || j == -1)
 		return false;
-
-	return true;
+	if(i >= 0 && j >= 0 && dict.cp > i && dict.elems[i].cp > j && i != dict.primLiber && j != dict.elems[i].primLiber)
+		return true;
+	return false;
 }
 
 /// Teta(1)
@@ -51,7 +52,7 @@ pair <TCheie, TValoare> IteratorMDO::element() const{
 	if (!this->valid())
 		throw exception();
 
-	return pair <TCheie, TValoare>  (this->p->e.first, this->pval->e);
+	return this->dict.elems[i].elems[j];
 }
 
 

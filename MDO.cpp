@@ -6,66 +6,242 @@
 #include <exception>
 using namespace std;
 
-/// Teta(1)
-NodVal::NodVal() {
-	this->pre = nullptr;
-	this->urm = nullptr;
-	this->e = 0;
+// Teta(1)
+lista_mica::lista_mica() {
+	this->prim = -1;
+	this->primLiber = -1;
+	this->cp = 0;
 }
 
-/// Teta(1)
-NodVal::NodVal(TValoare e, PNodVal urm, PNodVal pre) {
-	/// constructor
-	this->e = e;
-	this->urm = urm;
-	this->pre = pre;
+// Teta(1)
+lista_mica::lista_mica(TCheie c)
+{
+	this->cheie = c;
+	this->prim = -1;
+	this->primLiber = 0;
+	this->cp = 2;
+
+	this->elems = new TElem[cp];
+	urm = new int[cp];
+	pre = new int[cp];
+
+	// completam vectorul de pozitii ca fiind liber
+	for (int i = 0; i < cp - 1; i++)
+	{
+		urm[i] = i + 1;
+		pre[i] = -1;
+	}
+	urm[cp - 1] = -1;
+	pre[cp - 1] = -1;
 }
 
-/// Teta(1)
-TValoare NodVal::element() {
-	return e;
+// Teta(1)
+int lista_mica::aloca()
+{
+	/// <summary>
+	/// Marcheaza un nod din lista ca fiind ocupat
+	/// Complexitate: Theta(1)
+	/// </summary>
+	/// <returns> Returneaza pozitia nodului ce a fost marcat ca ocupat </returns>
+
+	int i = primLiber;			 // primul nod liber va fi ocupat
+	primLiber = urm[primLiber];  // primulLiber va fi urmatorul nod
+	return i;
 }
 
-/// Teta(1)
-PNodVal NodVal::urmator() {
-	return urm;
+// Teta(1)
+void lista_mica::dealoca(int i)
+{
+	/// <summary>
+	/// Marcheaza un nod dat ca fiind liber
+	/// Complexitate: Theta(1)
+	/// </summary>
+
+	urm[i] = primLiber;  // actualul primLiber se muta pe poz urmatoare
+	pre[primLiber] = i;
+	primLiber = i;		 // actualizam primLiber
 }
 
-/// Teta(1)
-PNodVal NodVal::precedent() {
-	return this->pre;
+
+int lista_mica::creeazaNod(TElem el)
+{
+	/// <summary>
+	/// Creeaza un nou nod in lista cu valoarea elementului dat
+	/// Complexitate: Theta(1) amortizat
+	/// </summary>
+	/// <returns> Pozitia din vector unde s-a creat nodul </returns>
+
+	if (primLiber == -1)	// daca nu mai avem noduri libere
+		redim();			// redimensionam vectorii
+
+	int i = aloca();		// alocam spatiu pentru noul nod
+ 
+	elems[i] = el;		// punem elementul pe pozitia alocata
+
+	if(prim != -1)
+		pre[prim] = i;
+	urm[i] = prim;
+	prim = i;
+	pre[i] = -1;
+
+	return i;				// returnam pozitia unde s-a creat nodul
 }
 
 
-/// Teta(1)
-Nod::Nod(TElem_new e, PNod urm, PNod pre) {
-	/// constructor
-	this->e = e;
-	this->urm = urm;
-	this->pre = pre;
+void lista_mica::redim()
+{
+	/// <summary>
+	/// Mareste capacitatea de stocare a vectorilor asociati implementarii colectiei
+	/// Complexitate: Theta(n), n - noua capacitatea a vectorului dupa redimensionare
+	/// </summary>
+
+	int cp_nou = cp * 2;	// dublam capacitatea
+	TElem* elem_nou = new TElem[cp_nou];
+	int* urm_nou = new int[cp_nou];
+	int* pre_nou = new int[cp_nou];
+
+	// copiem toate elementele din vectorii actuali in cei noi
+	for (int i = 0; i < cp; ++i)
+	{
+		elem_nou[i] = elems[i];
+		urm_nou[i] = urm[i];
+		pre_nou[i] = pre[i];
+	}
+
+	// marcam toate pozitiile noi adaugate ca facand 
+	// parte din vectorul de pozitii libere fiind consecutive
+	for (int i = cp; i < cp_nou - 1; ++i)
+	{
+		urm_nou[i] = i + 1;
+		pre_nou[i] = -1;
+	}
+	urm_nou[cp_nou - 1] = -1;  // ultima pozitie nu are niciun succesor
+	pre_nou[cp_nou - 1] = -1;
+
+	this->primLiber = cp;	   // setam primLiber la primul element nou dupa redim
+
+	//delete[] elems;
+	delete[] urm;
+	delete[] pre;
+
+	// actualizam proprietatile colectiei
+	this->elems = elem_nou;
+	this->urm = urm_nou;
+	this->cp = cp_nou;
 }
 
-/// Teta(1)
-TElem_new Nod::element() {
-	return e;
+int MDO::aloca()
+{
+	/// <summary>
+	/// Marcheaza un nod din lista ca fiind ocupat
+	/// Complexitate: Theta(1)
+	/// </summary>
+	/// <returns> Returneaza pozitia nodului ce a fost marcat ca ocupat </returns>
+
+	int i = primLiber;			 // primul nod liber va fi ocupat
+	primLiber = urm[primLiber];  // primulLiber va fi urmatorul nod
+	return i;
 }
 
-/// Teta(1)
-PNod Nod::urmator() {
-	return urm;
+
+void MDO::dealoca(int i)
+{
+	/// <summary>
+	/// Marcheaza un nod dat ca fiind liber
+	/// Complexitate: Theta(1)
+	/// </summary>
+
+	urm[i] = primLiber;  // actualul primLiber se muta pe poz urmatoare
+	pre[primLiber] = i;
+	primLiber = i;		 // actualizam primLiber
 }
 
-/// Teta(1)
-PNod Nod::precedent() {
-	return this->pre;
+
+int MDO::creeazaNod(TElem el)
+{
+	/// <summary>
+	/// Creeaza un nou nod in lista cu valoarea elementului dat
+	/// Complexitate: Theta(1) amortizat
+	/// </summary>
+	/// <returns> Pozitia din vector unde s-a creat nodul </returns>
+
+	if (primLiber == -1)	// daca nu mai avem noduri libere
+		redim();			// redimensionam vectorii
+
+	int i = aloca();		// alocam spatiu pentru noul nod
+
+
+	lista_mica list(el.first);
+	elems[i] = list;		// punem elementul pe pozitia alocata
+	elems[i].creeazaNod(el);
+
+	return i;				// returnam pozitia unde s-a creat nodul
 }
+
+
+void MDO::redim()
+{
+	/// <summary>
+	/// Mareste capacitatea de stocare a vectorilor asociati implementarii colectiei
+	/// Complexitate: Theta(n), n - noua capacitatea a vectorului dupa redimensionare
+	/// </summary>
+
+	int cp_nou = cp * 2;	// dublam capacitatea
+	lista_mica* elem_nou = new lista_mica[cp_nou];
+	int* urm_nou = new int[cp_nou];
+	int* pre_nou = new int[cp_nou];
+
+	// copiem toate elementele din vectorii actuali in cei noi
+	for (int i = 0; i < cp; ++i)
+	{
+		elem_nou[i] = elems[i];
+		urm_nou[i] = urm[i];
+		pre_nou[i] = pre[i];
+	}
+
+	// marcam toate pozitiile noi adaugate ca facand 
+	// parte din vectorul de pozitii libere fiind consecutive
+	for (int i = cp; i < cp_nou - 1; ++i)
+	{
+		urm_nou[i] = i + 1;
+		pre_nou[i] = -1;
+	}
+	urm_nou[cp_nou - 1] = -1;  // ultima pozitie nu are niciun succesor
+
+	this->primLiber = cp;	   // setam primLiber la primul element nou dupa redim
+
+	//delete[] elems;
+	//delete[] urm;
+
+	// actualizam proprietatile colectiei
+	this->elems = elem_nou;
+	this->urm = urm_nou;
+	this->cp = cp_nou;
+}
+
 
 /// Teta(1)
 MDO::MDO(Relatie r) {
-	/// constructor , setam inceputul cu null
-	this->Inceput = NULL;
 	this->len = 0;
 	this->rel = r;
+	this->prim = -1;
+	this->primLiber = 0;
+	this->cp = 2;
+
+	this->elems = new lista_mica[cp];
+	urm = new int[cp];
+	pre = new int[cp];
+
+	// completam vectorul de pozitii ca fiind liber
+	for (int i = 0; i < cp - 1; i++)
+	{
+		urm[i] = i + 1;
+		pre[i] = -1;
+	}
+	urm[cp - 1] = -1;
+	pre[cp - 1] = -1;
+	prim = -1;
+	primLiber = 0;
 }
 
 /// caz favoranil : Teta(1)
@@ -74,87 +250,78 @@ MDO::MDO(Relatie r) {
 /// overall case : O(n)
 void MDO::adauga(TCheie c, TValoare v) {
 
-	this->len++;
-	/// daca lista e vida definim un nod de inceput in care ne punem elementele
-
-	if (this->Inceput == NULL)
+	if (this->prim == -1) // daca dictionarul e vid
 	{
-		PNodVal pval = new NodVal(v, nullptr, nullptr);
-		TElem_new e;
-		e.first = c;
-		e.second = pval;
-		PNod newp = new Nod(e, nullptr, nullptr);
-		this->Inceput = newp;
+		TElem element_auxiliar;
+		element_auxiliar.first = c;
+		element_auxiliar.second = v;
+		int i = this->creeazaNod(element_auxiliar);
+
+		if (prim != -1)
+			pre[prim] = i;
+		urm[i] = prim;
+		prim = i;
+		pre[i] = -1;
+		this->len = 1;
 		return;
 	}
 
-	PNod aux1 = this->Inceput;
-	PNod aux2 = this->Inceput->urm;
-
-	// testam sa vedem daca elementul trebuie pus la inceput
-
-	if (c == aux1->e.first) // daca cheia exista deja
+	int anterior = -1;
+	int current = prim;
+	while (current != -1 && rel(this->elems[current].cheie, c))
 	{
-		PNodVal pval = new NodVal(v, nullptr, nullptr);
-		pval->urm = aux1->e.second;
-		aux1->e.second->pre = pval;
-		aux1->e.second = pval;
-		return;
-	}
-
-	if (this->rel(c, aux1->e.first))
-	{
-		PNodVal pval = new NodVal(v, nullptr, nullptr);
-		TElem_new e;
-		e.first = c;
-		e.second = pval;
-		PNod newp = new Nod(e, nullptr, nullptr);
-		newp->urm = this->Inceput;
-		this->Inceput = newp;
-		return;
-	}
-
-	// iteram prin lista cautand elementul
-
-	while (aux2 != NULL)
-	{
-		if (c == aux2->e.first) // daca cheia exista deja
+		if (this->elems[current].cheie == c)
 		{
-			PNodVal pval = new NodVal(v, nullptr, nullptr);
-			aux2->e.second->pre = pval;
-			pval->urm = aux2->e.second;
-			aux2->e.second = pval;
+			TElem element_auxiliar;
+			element_auxiliar.first = c;
+			element_auxiliar.second = v;
+			this->elems[current].creeazaNod(element_auxiliar);
+			this->len++;
 			return;
 		}
 
-		// unde relatia este satisfacuta acolo trebuie pus elementul
-		if (this->rel(c, aux2->e.first))
-		{
-			PNodVal pval = new NodVal(v, nullptr, nullptr);
-			TElem_new e;
-			e.first = c;
-			e.second = pval;
-			PNod newp = new Nod(e, nullptr, nullptr);
-			newp->urm = aux2;
-			newp->pre = aux1;
-			aux1->urm = newp;
-			aux2->pre = newp;
-			return;
-		}
-
-		aux1 = aux1->urm;
-		aux2 = aux2->urm;
+		anterior = current;
+		current = urm[current];
 	}
 
-	// daca iesim din while elementul trebuie pus la finalul listei
-	PNodVal pval = new NodVal(v, nullptr, nullptr);
-	TElem_new e;
-	e.first = c;
-	e.second = pval;
-	PNod newp = new Nod(e, nullptr, nullptr);
-	newp->pre = aux1;
-	aux1->urm = newp;
-	return;
+	if (current <= -1)
+	{
+		TElem element_auxiliar;
+		element_auxiliar.first = c;
+		element_auxiliar.second = v;
+		int i = this->creeazaNod(element_auxiliar);
+		this->len++;
+		urm[anterior] = i;
+		pre[i] = anterior;
+		urm[i] = -1;
+		return;
+	}
+	else if (this->elems[current].cheie == c)
+	{
+		TElem element_auxiliar;
+		element_auxiliar.first = c;
+		element_auxiliar.second = v;
+		this->elems[current].creeazaNod(element_auxiliar);
+		this->len++;
+		return;
+	}
+	else if (!rel(this->elems[current].cheie, c))
+	{
+		TElem element_auxiliar;
+		element_auxiliar.first = c;
+		element_auxiliar.second = v;
+		int i = this->creeazaNod(element_auxiliar);
+
+		if(anterior > -1)
+			urm[anterior] = i;
+		pre[i] = anterior;
+		urm[i] = current;
+		pre[current] = i;
+		if (anterior == -1)
+			this->prim = i;
+		this->len++;
+		return;
+	}
 }
 
 
@@ -166,23 +333,22 @@ vector<TValoare> MDO::cauta(TCheie c) const {
 	//cauta o cheie si returneaza vectorul de valori asociate
 
 	vector<TValoare> v;
-	PNod aux1 = this->Inceput;
 
-	while (aux1 != NULL)
+	int current = prim;
+	while (current != -1 && rel(this->elems[current].cheie, c))
 	{
-		if (c == aux1->e.first)
+		if (this->elems[current].cheie == c)
 		{
-			PNodVal aux2 = aux1->e.second;
-
-			while (aux2 != NULL)
+			// adaugam toate valorile
+			int first_elem = this->elems[current].prim;
+			while (first_elem != -1)
 			{
-				v.push_back(aux2->e);
-				aux2 = aux2->urm;
+				v.push_back(this->elems[current].elems[first_elem].second);
+				first_elem = this->elems[current].urm[first_elem];
 			}
 			return v;
 		}
-
-		aux1 = aux1->urm;
+		current = urm[current];
 	}
 
 	return v;
@@ -196,88 +362,87 @@ bool MDO::sterge(TCheie c, TValoare v) {
 
 	// cautam dupa cheie apoi dupa valoare
 
-	if (this->Inceput == NULL)
+	if(prim == -1)
 		return false;
 
-	PNod aux = this->Inceput;
-	PNod auxA = this->Inceput->urm;
+	int current = prim;
 
-	if (c == aux->e.first)
+	if (c == elems[current].cheie)
 	{
-		PNodVal aux1 = aux->e.second;
-		PNodVal aux2 = aux1->urm;
-
-		// verificam daca prima val este cea cautata
-		if (v == aux1->e)
+		int first_elem = this->elems[current].prim;
+		while (first_elem != -1)
 		{
-			this->Inceput->e.second = this->Inceput->e.second->urm;
-			if (this->Inceput->e.second == NULL) // daca este null atunci stergem cheia din dictionar
+			if (this->elems[current].elems[first_elem].second == v)
 			{
-				this->Inceput = this->Inceput->urm;
-			}
-			this->len--;
-			return true;
-		}
+				if (this->elems[current].pre[first_elem] > -1)
+					this->elems[current].urm[this->elems[current].pre[first_elem]] = this->elems[current].urm[first_elem];
 
-		while (aux2 != NULL)
-		{
-			if (v == aux2->e)
-			{
-				aux1->urm = aux2->urm;
-				if (aux1->urm != NULL)
-					aux2->urm->pre = aux1;
-				this->len--;
-				return true;
-			}
-			aux1 = aux1->urm;
-			aux2 = aux2->urm;
-		}
-		return false;
-	}
+				if (this->elems[current].urm[first_elem] > -1)
+					this->elems[current].pre[this->elems[current].urm[first_elem]] = this->elems[current].pre[first_elem];
+				
+				if (this->elems[current].prim == first_elem)
+					this->elems[current].prim = this->elems[current].urm[first_elem];
 
-	while (auxA != NULL)
-	{
-		if (c == auxA->e.first)
-		{
-			PNodVal aux1 = auxA->e.second; 
-			PNodVal aux2 = aux1->urm;
-			
-			// verificam daca prima val este cea cautata
-			if (v == aux1->e)
-			{
-				auxA->e.second = auxA->e.second->urm;
-				if (auxA->e.second == NULL) // daca este null atunci stergem cheia din dictionar
+				this->elems[current].dealoca(first_elem);
+
+				if (this->elems[current].prim == -1)
 				{
-					aux->urm = auxA->urm;
-					if (aux->urm != NULL)
-						aux->urm->pre = aux;
+					if (this->pre[current] > -1)
+						this->urm[this->pre[current]] = this->urm[current];
+					if (this->urm[current] > -1)
+						this->pre[this->urm[current]] = this->pre[current];
+
+					this->prim = this->urm[current];
+					this->dealoca(current);
 				}
 				this->len--;
 				return true;
 			}
+			first_elem = this->elems[current].urm[first_elem];
+		}
+		return false;
+	}
 
-			while (aux2 != NULL)
+	current = urm[current];
+	while (current != -1 && rel(this->elems[current].cheie, c))
+	{
+		if (this->elems[current].cheie == c)
+		{
+			int first_elem = this->elems[current].prim;
+			while (first_elem != -1)
 			{
-				if (v == aux2->e)
+				if (this->elems[current].elems[first_elem].second == v)
 				{
-					aux1->urm = aux2->urm;
-					if (aux1->urm != NULL)
-						aux2->urm->pre = aux1;
+					if (this->elems[current].pre[first_elem] > -1)
+						this->elems[current].urm[this->elems[current].pre[first_elem]] = this->elems[current].urm[first_elem];
+					
+					if (this->elems[current].urm[first_elem] > -1)
+						this->elems[current].pre[this->elems[current].urm[first_elem]] = this->elems[current].pre[first_elem];
+					
+					if (this->elems[current].prim == first_elem)
+						this->elems[current].prim = this->elems[current].urm[first_elem];
+
+					this->elems[current].dealoca(first_elem);
+					if (this->elems[current].prim == -1)
+					{
+						if (this->pre[current] > -1)
+							this->urm[this->pre[current]] = this->urm[current];
+						if (this->urm[current] > -1)
+							this->pre[this->urm[current]] = this->pre[current];
+
+						this->dealoca(current);
+					}
 					this->len--;
 					return true;
 				}
-				aux1 = aux1->urm;
-				aux2 = aux2->urm;
+				first_elem = this->elems[current].urm[first_elem];
 			}
-
 			return false;
 		}
-
-		aux = aux->urm;
-		auxA = auxA->urm;
+		current = urm[current];
 	}
-	
-	return false;
+
+	return false; /// daca nu gasim cheia
 }
 
 /// Teta(1)
@@ -298,13 +463,70 @@ IteratorMDO MDO::iterator() const {
 	return IteratorMDO(*this);
 }
 
-/// Teta(n)
+/// Teta(1)
 MDO::~MDO() {
-	/// trecem prim toate elementele ramase in lista pentru a le sterge din memorie
-	while (this->Inceput != nullptr)
-	{
-		PNod p = this->Inceput;
-		this->Inceput = this->Inceput->urm;
-		delete p;
-	}
+	//delete[] urm;
+	//delete[] pre;
 }
+
+/// n = numarul de perechi cheie & val din dictionar
+/// caz favoranil : Teta(1)
+/// caz defavorabil : Teta(n)
+/// caz mediu : Teta(n)
+/// overall case : O(n)
+//vector<TValoare> MDO::stergeValoriPentruCheie(TCheie cheie)
+//{
+//	// cautam cheia in discionar
+//	// daca o gasim iteram prin lista de valori ale cheii , salvandu-le in vector
+//	// iar apoi stergem lista
+//	vector<TValoare> raspuns;
+//
+//	if (this->Inceput == NULL)
+//		return raspuns;
+//
+//	PNod aux = this->Inceput;
+//	PNod auxA = this->Inceput->urm;
+//
+//	/// daca cheia cautata este prima cheie 
+//	if (cheie == aux->e.first)
+//	{
+//		PNodVal aux1 = aux->e.second;
+//		
+//		while (aux1 != NULL)
+//		{
+//			raspuns.push_back(aux1->e);
+//			aux1 = aux1->urm;
+//		}
+//		this->Inceput = this->Inceput->urm;
+//		this->len -= raspuns.size();
+//		return raspuns;
+//	}
+//
+//	// iteram prin lista cautand valoarea
+//	while (auxA != NULL)
+//	{
+//		if (auxA->e.first == cheie)
+//		{
+//			PNodVal aux1 = auxA->e.second;
+//
+//			while (aux1 != NULL)
+//			{
+//				raspuns.push_back(aux1->e);
+//				aux1 = aux1->urm;
+//			}
+//
+//			aux->urm = auxA->urm;
+//			if (aux->urm != NULL)
+//				auxA->urm->pre = aux;
+//			
+//			this->len -= raspuns.size();
+//			return raspuns;
+//		}
+//
+//		aux = aux->urm;
+//		auxA = auxA->urm;
+//	}
+//
+//	// daca nu este gasita valoarea returnam un vector vid
+//	return raspuns;
+//}

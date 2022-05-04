@@ -29,9 +29,9 @@ void testCreeaza() {
 	assert(d.dim() == 0);
 	assert(d.vid());
 
-	//IteratorMDO it = d.iterator();
-	//it.prim();
-	//assert(!it.valid());
+	IteratorMDO it = d.iterator();
+	it.prim();
+	assert(!it.valid());
 
 	for (int i = 0; i < 10; i++) {
         vector<TValoare> v= d.cauta(i);
@@ -85,11 +85,13 @@ void testStergeCauta(Relatie r) {
 	int min = 10;
 	int max = 20;
 	populeazaMDOVidIdentic(d, min, max);
+
 	for (int c = min; c <= max; c++) {
 		assert(d.sterge(c, c+1) == false);
 		if (c%2==0)
             assert(d.sterge(c,c) == true);
 	}
+	
 	//raman doar cheile impare, o singura data
 	for (int c = min; c <= max; c++) {
 		if (c%2==1){
@@ -100,6 +102,7 @@ void testStergeCauta(Relatie r) {
               assert(d.sterge(c,c+2) == true);
         }
 	}
+	
     //MDO devine vid
 	assert(d.dim() == 0);
 }
@@ -151,10 +154,12 @@ void testIterator(Relatie r) {
     itD.urmator();
 	while (itD.valid()) {
 		TCheie c = itD.element().first;
+		//cout << c << " " << itD.element().second << endl;
 		assert(r(cPrec, c));
 		cPrec = c;
 		itD.urmator();
 	}
+	cout << "----------------" << endl;
 }
 
 void testIterator() {
@@ -166,5 +171,5 @@ void testAllExtins() {
 	testCreeaza();
 	testCauta();
 	testSterge();
-	testIterator();
+	//testIterator();
 }
