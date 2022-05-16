@@ -171,5 +171,4 @@ void testAllExtins() {
 	testCreeaza();
 	testCauta();
 	testSterge();
-	//testIterator();
 }

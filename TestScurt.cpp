@@ -36,22 +36,46 @@ void testAll(){
     assert(dictOrd.vid());
 }
 
-//void new_func_test()
-//{
-//    MDO d = MDO(relatie1);
-//    assert(d.stergeValoriPentruCheie(3).size() == 0);
-//    d.adauga(1, 2);
-//    d.adauga(1, 3);
-//    assert(d.stergeValoriPentruCheie(1).size() == 2);
-//    assert(d.vid());
-//
-//
-//    d.adauga(1, 2);
-//    d.adauga(1, 3);
-//    d.adauga(2, 4);
-//    d.adauga(2, 5);
-//    d.adauga(3, 100);
-//    assert(d.stergeValoriPentruCheie(2).size() == 2);
-//    assert(d.dim() == 3);
-//}
+void new_test()
+{
+    MDO d = MDO(relatie1);
+    d.adauga(3, 3);
+    d.adauga(1, 1);
+    d.adauga(3, 2);
+    d.adauga(3, 1);
+    d.adauga(2, 7);
+    d.adauga(2, 23);
+
+    int i = 0;
+    IteratorValori it(d, 3);
+    it.prim();
+
+    while (it.valid())
+    {
+        //cout << it.element() << " \n";
+        it.urmator();
+        i++;
+    }
+
+    assert(i == 3);
+
+    i = 0;
+    IteratorValori it1(d, 2);
+    it1.prim();
+
+    while (it1.valid())
+    {
+        //cout << it1.element() << " \n";
+        it1.urmator();
+        i++;
+    }
+
+    assert(i == 2);
+
+
+    IteratorValori it2(d, 1);
+    it2.prim();
+    assert(it2.element() == 1);
+
+}
 

@@ -12,6 +12,7 @@ typedef std::pair<TCheie, TValoare> TElem;
 using namespace std;
 
 class IteratorMDO;
+class IteratorValori;
 class MDO;
 
 class lista_mica {
@@ -36,6 +37,7 @@ typedef bool(*Relatie)(TCheie, TCheie);
 
 class MDO {
 	friend class IteratorMDO;
+	friend class IteratorValori;
  private:
 public:
 		Relatie rel;
@@ -44,7 +46,7 @@ public:
 		int* pre;
 	    int prim;			// primul element din colectie
 		int primLiber;		// pozitia primului element liber
-		int len;			// numarul elementelor din colectie
+		int len;			// numarul elementelor 
 		lista_mica* elems;
 
 		int aloca();

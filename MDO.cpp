@@ -454,7 +454,7 @@ int MDO::dim() const {
 /// Teta(1)
 bool MDO::vid() const {
 	// returnam adevarat daca dictionarul este vid
-	return this->len == 0;
+	return this->len == 0; // sau prim == -1
 }
 
 /// Teta(1)

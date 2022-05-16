@@ -30,6 +30,9 @@
     <ClCompile Include="TestScurt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IteratorNou.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IteratorMDO.h">
@@ -42,6 +45,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TestScurt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IteratorNou.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

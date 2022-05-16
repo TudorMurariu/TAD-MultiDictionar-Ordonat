@@ -141,12 +141,14 @@
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="IteratorMDO.cpp" />
+    <ClCompile Include="IteratorNou.cpp" />
     <ClCompile Include="MDO.cpp" />
     <ClCompile Include="TestExtins.cpp" />
     <ClCompile Include="TestScurt.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IteratorMDO.h" />
+    <ClInclude Include="IteratorNou.h" />
     <ClInclude Include="MDO.h" />
     <ClInclude Include="TestExtins.h" />
     <ClInclude Include="TestScurt.h" />
